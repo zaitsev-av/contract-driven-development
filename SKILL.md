@@ -1,7 +1,11 @@
 ---
 name: contract-driven-development
-description: "Develop features through a 3-phase contract-first workflow. Phase 1: 5 structured questions form a compact YAML contract. Phase 2: agent draws a map (200-300 words, no implementation). Phase 3: autonomous slices with auto-continue on green tests, human interrupt on red. Minimises human reading time -- the human answers questions, the agent writes code."
-tags: [workflow, planning, autonomous, contract, tdd]
+description: "3-phase contract-first workflow for human and AI agent pair programming. Phase 1: agent asks 5 structured questions forming a YAML contract. Phase 2: agent draws a schematic map in 200-300 words. Phase 3: autonomous implementation in checkpointed slices with auto-continue on green tests. Use when starting a feature, fix, or refactor where you want minimal review overhead -- the agent asks short questions instead of writing long plans."
+license: MIT
+compatibility: "Designed for Claude Code, Hermes Agent, Cursor, OpenCode, Aider, and any agent that reads SKILL.md files. Requires file system access to write contract YAML."
+metadata:
+  author: zaitsev-av
+  version: "1.0.0"
 ---
 
 # Contract-Driven Development
