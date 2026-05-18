@@ -1,0 +1,27 @@
+# Contract: <one-line summary>
+# Created: <date>
+# Slug: <kebab-case-identifier>
+
+context: "<one sentence — what happened and why now>"
+
+boundaries:
+  - "<file/module/API to leave untouched>"
+  - "<another>"
+
+invariants:
+  - "<property that must stay true>"
+  - "<another>"
+
+acceptance:
+  - "<user persona> <does what> → <sees what>"
+  - "<another scenario if needed>"
+
+style:
+  - "<library to use, pattern to follow, example file to reference>"
+  - "<another>"
+
+# --- Amendments (filled during Phase 3) ---
+# amendments:
+#   - question: "<uncovered decision>"
+#     answer: "<human response>"
+#     date: "<when>"

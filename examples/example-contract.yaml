@@ -1,0 +1,32 @@
+# Contract: Add CSV export for reports
+# Created: 2026-05-18
+# Slug: reports-csv-export
+
+context: "Customers complain they can't export reports — they screenshot the dashboard and paste into Excel. Support gets 5-10 tickets/week about this."
+
+boundaries:
+  - "src/auth/* — authentication layer, don't touch"
+  - "database schema — read-only, no migrations"
+  - "frontend React app — this is backend-only"
+  - "existing PDF export in src/export/pdf.go — don't break"
+
+invariants:
+  - "API backwards compatible — no breaking changes to existing endpoints"
+  - "Response time under 500ms for reports up to 10K rows"
+  - "All existing tests must stay green"
+  - "Memory usage stays under 200MB during export"
+
+acceptance:
+  - "Admin user with role 'admin' navigates to /reports, sees Export button, clicks → downloads CSV with correct data and UTF-8 encoding"
+  - "User with role 'viewer' does NOT see Export button"
+
+style:
+  - "Follow pattern from src/export/pdf.go — same handler structure, same error handling"
+  - "Use encoding/csv from stdlib, no third-party CSV libraries"
+  - "Tests: table-driven pattern from tests/export_pdf_test.go"
+
+# --- Amendments (filled during Phase 3) ---
+# amendments:
+#   - question: "Need to add an index on reports.created_at for performance — is that ok?"
+#     answer: "Yes, add the index, but only if migration is backwards-compatible"
+#     date: "2026-05-18"
