@@ -48,7 +48,7 @@ Before writing the contract, replay your understanding in 2-3 sentences: «Я п
 
 ### Write the contract
 
-Save to `.hermes/contracts/<slug>.yaml`. Template in `templates/contract.yaml`. Show it to the user and ask for approval. Human says «ок» or corrects.
+Save the contract to a `contracts/` directory within your harness's artifact path: `.hermes/contracts/<slug>.yaml`, `.claude/contracts/<slug>.yaml`, or equivalent. Template in `templates/contract.yaml`. Show it to the user and ask for approval. Human says «ок» or corrects.
 
 The contract is the **only** document the human approves before work starts. 20-30 lines, not 1000.
 

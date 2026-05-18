@@ -25,34 +25,19 @@
 
 ## С чем работает
 
-### Claude Code — первоклассная поддержка
+Один файл — все harness-ы. Скопируйте `SKILL.md` в нужное место:
 
-Один файл — и команда `/contract` готова:
+| Harness | Куда положить | Как вызвать |
+|---------|--------------|------------|
+| **Claude Code** | `.claude/commands/contract.md` | `/contract` |
+| **Hermes Agent** | `~/.hermes/skills/software-development/contract-driven-development/SKILL.md` | `skill_view(name='contract-driven-development')` |
+| **Cursor** | `.cursor/rules/contract-driven.md` | Загружается автоматически |
+| **OpenCode** | `.opencode/skills/contract-driven.md` | Загружается автоматически |
+| **Aider** | `.aider/commands/contract.md` | `/contract` |
 
-```bash
-cp adapters/claude-code/contract.md .claude/commands/contract.md
-```
+Контракты сохраняются в `.hermes/contracts/`, `.claude/contracts/` или туда, куда пишет артефакты конкретный harness — путь настраивается в самом скилле.
 
-Клод задаёт 5 вопросов, пишет контракт, рисует карту и работает слайсами с авто-продолжением. Контракты сохраняются в `.claude/contracts/`.
-
-### Другие агентские harness-ы
-
-Методология не привязана к конкретному инструменту. Ключевой артефакт — YAML-контракт. Любой агент, умеющий читать файл и следовать инструкциям, может работать по этой схеме.
-
-| Harness | Как подключить |
-|---------|---------------|
-| **Hermes Agent** | Встроенный скилл: `skill_view(name='contract-driven-development')`. Контракты в `.hermes/contracts/`. |
-| **Cursor** | Напишите контракт вручную, добавьте в `.cursorrules`: «Прочитай `.cursor/contracts/current.yaml` перед началом. Если решение выходит за границы — спроси, не продолжай.» |
-| **Aider** | Добавьте путь к контракту в `read:` файла `.aider.conf.yml`. Используйте `/read-only` для файлов из `boundaries`. |
-| **OpenHands / Devin** | Передайте контракт как `instructions` в конфиге задачи. Агент читает границы перед генерацией плана. |
-| **GitHub Copilot** | Включите YAML-контракт в тело issue. Copilot Workspace читает его как спецификацию. |
-| **Любой агент с доступом к файлам** | Положите контракт в репозиторий. Добавьте правило: «Прочитай `.contracts/<task>.yaml` перед началом.» |
-
-### Почему Claude Code — лучшая посадка
-
-Кастомные слеш-команды (`/contract`) поддерживают интерактивные многошаговые диалоги. Адаптер в этом репозитории даёт полноценный диалог: агент спрашивает, вы отвечаете, контракт формируется органически.
-
-Для других harness-ов без кастомных команд вы пишете контракт самостоятельно (используя шаблон) и передаёте как ограничение. Методология держится: поверхность утверждения сжимается с «плана на 1000 строк» до «YAML-а на 20 строк».
+YAML-контракт — портабельный артефакт. Даже если вы смените harness посреди проекта, контракт останется валидным.
 
 ## Фаза 1: Контракт
 
@@ -132,15 +117,11 @@ contract-driven-development/
 ├── README.md                          ← English
 ├── README.ru.md                       ← Русский (этот файл)
 ├── LICENSE                            ← MIT
-├── SKILL.md                           ← Встроенный скилл для Hermes Agent
+├── SKILL.md                           ← Универсальный скилл — скопируйте в любой harness
 ├── templates/
 │   └── contract.yaml                  ← Пустой шаблон контракта
-├── examples/
-│   └── example-contract.yaml          ← Живой пример: экспорт отчётов в CSV
-└── adapters/
-    └── claude-code/
-        ├── README.md                  ← Инструкция по установке
-        └── contract.md                ← Слеш-команда /contract
+└── examples/
+    └── example-contract.yaml          ← Живой пример: экспорт отчётов в CSV
 ```
 
 ## Лицензия

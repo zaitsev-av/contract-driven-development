@@ -25,34 +25,19 @@ You touch the process three times:
 
 ## Works With
 
-### Claude Code — first-class support
+One skill file, every harness. Copy `SKILL.md` to the right place:
 
-Drop a single file and type `/contract`:
+| Harness | Where to put it | How to invoke |
+|---------|----------------|---------------|
+| **Claude Code** | `.claude/commands/contract.md` | `/contract` |
+| **Hermes Agent** | `~/.hermes/skills/software-development/contract-driven-development/SKILL.md` | `skill_view(name='contract-driven-development')` |
+| **Cursor** | `.cursor/rules/contract-driven.md` | Loaded automatically per task |
+| **OpenCode** | `.opencode/skills/contract-driven.md` | Loaded automatically |
+| **Aider** | `.aider/commands/contract.md` | `/contract` |
 
-```bash
-cp adapters/claude-code/contract.md .claude/commands/contract.md
-```
+Contracts land in `.hermes/contracts/`, `.claude/contracts/`, or wherever the harness stores task artifacts — the path is configured in the skill itself.
 
-From that point, Claude asks the 5 questions, writes the contract, draws the map, and works in checkpointed slices. Contracts land in `.claude/contracts/`.
-
-### Other agent harnesses
-
-The methodology itself is harness-agnostic. The core artifact is a YAML contract — any agent that can read a file and follow instructions can use it.
-
-| Harness | How to adopt |
-|---------|-------------|
-| **Hermes Agent** | Native skill: `skill_view(name='contract-driven-development')`. Contracts to `.hermes/contracts/`. |
-| **Cursor** | Write the contract manually, add to `.cursorrules`: "Read `.cursor/contracts/current.yaml` before starting. If a decision falls outside boundaries, ask — do not proceed." |
-| **Aider** | Add contract path to `read:` in `.aider.conf.yml`. Use `/read-only` for boundary files. |
-| **OpenHands / Devin** | Pass the contract as `instructions` in the task config. The agent reads boundaries before generating a plan. |
-| **GitHub Copilot** | Include the contract YAML in the issue body. Copilot Workspace reads it as the spec. |
-| **Any agent with file access** | Write a contract YAML in the repo. Add a rule: "Read `.contracts/<task>.yaml` before starting." |
-
-### A note on Claude Code vs others
-
-Claude Code has the best fit because its custom slash commands (`/contract`) support interactive multi-turn workflows. The adapter in this repo gives you the full dialogue experience — the agent asks, you answer, the contract forms organically.
-
-For other harnesses that lack custom commands, you pre-write the contract yourself (using the template) and feed it as a constraint. The methodology still holds; the contract still shrinks the approval surface from "1000-line plan" to "20-line YAML."
+The contract YAML is the portable artifact. Even if you switch harnesses mid-project, the contract stays valid.
 
 ## Phase 1: Contract
 
@@ -132,15 +117,11 @@ contract-driven-development/
 ├── README.md                          ← English (this file)
 ├── README.ru.md                       ← Russian
 ├── LICENSE                            ← MIT
-├── SKILL.md                           ← Native skill for Hermes Agent
+├── SKILL.md                           ← Universal skill — copy to any harness
 ├── templates/
 │   └── contract.yaml                  ← Blank contract template
-├── examples/
-│   └── example-contract.yaml          ← Worked example: CSV export feature
-└── adapters/
-    └── claude-code/
-        ├── README.md                  ← Install instructions
-        └── contract.md                ← /contract slash command
+└── examples/
+    └── example-contract.yaml          ← Worked example: CSV export feature
 ```
 
 ## License
