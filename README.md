@@ -13,13 +13,14 @@ Agents generate anything in seconds. The standard pattern — plan, approve, exe
 The agent doesn't write *to* you. The agent asks *you*. You answer briefly. The agent works autonomously within the boundaries you set.
 
 ```
-Phase 1: Contract      → 5 questions, 20-line YAML
+Phase 0: Analysis      → agent reads task + explores code (silent)
+Phase 1: Contract      → targeted questions → 20-line YAML
 Phase 2: Map           → 200-300 words, direction check
 Phase 3: Implementation → slices, auto-continue on green tests
 ```
 
 You touch the process three times:
-1. Answer 5 questions (2 minutes)
+1. Answer questions derived from code analysis (1-2 minutes)
 2. Look at a map, say "ok" (15 seconds)
 3. Check a red slice (rare)
 
@@ -39,17 +40,23 @@ Contracts land in `.hermes/contracts/`, `.claude/contracts/`, or wherever the ha
 
 The contract YAML is the portable artifact. Even if you switch harnesses mid-project, the contract stays valid.
 
+## Phase 0: Analysis (silent)
+
+Before asking anything, the agent reads the task and explores relevant code. For each contract dimension it checks: can this be derived from the codebase? If yes — it fills the field itself and doesn't ask. If no — it adds a question to Phase 1.
+
 ## Phase 1: Contract
 
-Agent does NOT write a plan. Agent asks 5 structured questions:
+Agent does NOT write a plan. Agent asks only what Phase 0 couldn't answer — no fixed number, no ritual questions. There are 5 contract dimensions:
 
-| # | Question | Contract field |
-|---|----------|---------------|
-| 1 | What must NOT be touched? | `boundaries` |
-| 2 | What must remain true? | `invariants` |
-| 3 | How do we know it's done? | `acceptance` |
-| 4 | What libraries/patterns to use? | `style` |
-| 5 | What happened and why now? | `context` |
+| Dimension | Question | Contract field |
+|-----------|----------|---------------|
+| Boundaries | What must NOT be touched? | `boundaries` |
+| Invariants | What must remain true? | `invariants` |
+| Acceptance | How do we know it's done? | `acceptance` |
+| Style | What libraries/patterns to use? | `style` |
+| Context | What happened and why now? | `context` |
+
+Questions the agent can answer from code are skipped. If all dimensions are clear from context, the agent goes straight to the contract draft.
 
 Output: a 20-30 line YAML file. The human approves the contract, not a plan.
 
@@ -80,17 +87,41 @@ Order:
 
 Human checks one thing: is the direction right?
 
+**The map is a hypothesis.** New files discovered during implementation are added silently — no stop, no re-approval — as long as they don't touch `boundaries`. The map is wrong only if the approach itself changes.
+
 ## Phase 3: Implementation with Checkpoints
 
-Agent cuts work into slices. After each slice:
+Agent cuts work into atomic slices (one verb phrase, compiles alone, one test target). After each slice:
 
 ```
-Slice → tests → green? → auto-continue
+Slice → tests → green?           → auto-continue
                     ↓ no
-               Stop. Human looks.
+            TDD-red (expected)?  → auto-continue to impl slice
+                    ↓ no
+            Regression-red
+                    ↓
+            Agent diagnoses root cause
+                    ↓
+            Stop card → human picks A / B / C
+                    ↓
+            Agent executes → continue
 ```
 
-Human intervenes only when tests are red or the agent hits a decision not covered by the contract.
+Stop card format:
+```
+STOP — Regression: <test name>
+
+Problem:  <what failed>
+Cause:    <what in this slice triggered it>
+Fix:      <proposed fix>
+
+Next:
+  A) Apply proposed fix → continue
+  B) Roll back slice N, try differently: <alternative>
+  C) Amend contract: <wrong assumption>
+```
+
+Human intervenes only on regression failures or decisions not covered by the contract.
 
 ## Why This Works
 
